@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Agent Research Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Multi-Agent Research Assistant</h1>
+            <p class="subtitle">Powered by A2A Protocol with Perplexity, Claude, and Gemini</p>
+        </header>
+
+        <main>
+            <!-- Research Input Section -->
+            <section class="research-input">
+                <div class="input-group">
+                    <input
+                        type="text"
+                        id="query-input"
+                        placeholder="Enter your research query (e.g., 'Impact of AI on healthcare in 2024')"
+                        autocomplete="off"
+                    >
+                    <button id="search-btn" onclick="executeResearch()">
+                        <span class="btn-text">Research</span>
+                        <span class="btn-loading" style="display: none;">
+                            <span class="spinner"></span>
+                        </span>
+                    </button>
+                </div>
+                <div class="options">
+                    <label>
+                        Depth:
+                        <select id="depth-select">
+                            <option value="quick">Quick (1-2 min)</option>
+                            <option value="standard" selected>Standard (3-5 min)</option>
+                            <option value="deep">Deep (5-10 min)</option>
+                        </select>
+                    </label>
+                    <label>
+                        Output:
+                        <select id="format-select">
+                            <option value="report" selected>Full Report</option>
+                            <option value="summary">Summary</option>
+                            <option value="bullets">Bullet Points</option>
+                        </select>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="stream-check" checked>
+                        Stream Progress
+                    </label>
+                </div>
+            </section>
+
+            <!-- Agent Status Section -->
+            <section class="agent-status">
+                <h2>Agent Activity</h2>
+                <div class="agents-grid">
+                    <div class="agent-card" id="agent-perplexity">
+                        <div class="agent-icon">P</div>
+                        <div class="agent-info">
+                            <span class="agent-name">Perplexity</span>
+                            <span class="agent-role">Web Research</span>
+                        </div>
+                        <div class="agent-status-indicator" id="status-perplexity">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Idle</span>
+                        </div>
+                    </div>
+                    <div class="agent-card" id="agent-claude">
+                        <div class="agent-icon">C</div>
+                        <div class="agent-info">
+                            <span class="agent-name">Claude</span>
+                            <span class="agent-role">Analysis</span>
+                        </div>
+                        <div class="agent-status-indicator" id="status-claude">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Idle</span>
+                        </div>
+                    </div>
+                    <div class="agent-card" id="agent-gemini">
+                        <div class="agent-icon">G</div>
+                        <div class="agent-info">
+                            <span class="agent-name">Gemini</span>
+                            <span class="agent-role">Validation</span>
+                        </div>
+                        <div class="agent-status-indicator" id="status-gemini">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Idle</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Progress Section -->
+            <section class="progress-section" id="progress-section" style="display: none;">
+                <h2>Workflow Progress</h2>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="progress-text">Initializing...</div>
+            </section>
+
+            <!-- Message Log Section -->
+            <section class="message-log" id="message-log-section">
+                <h2>A2A Message Log</h2>
+                <div class="log-container" id="log-container">
+                    <div class="log-placeholder">Messages will appear here during research...</div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="results-section" style="display: none;">
+                <h2>Research Results</h2>
+                <div class="results-meta" id="results-meta"></div>
+                <div class="results-content" id="results-content"></div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-links">
+                <a href="/health">Health Check</a>
+                <a href="/agents">Agent Registry</a>
+                <a href="/docs">API Docs</a>
+            </div>
+            <p class="footer-text">A2A Protocol Research System v1.0</p>
+        </footer>
+    </div>
+
+    <!-- Markdown Renderer -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>
