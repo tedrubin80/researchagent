@@ -1,135 +1,341 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Agent Research Assistant</title>
+    <title>Research Agent - Multi-Agent AI Research</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Multi-Agent Research Assistant</h1>
-            <p class="subtitle">Powered by A2A Protocol with Perplexity, Claude, and Gemini</p>
-        </header>
+    <!-- Animated Background -->
+    <div class="bg-gradient"></div>
+    <div class="bg-grid"></div>
 
-        <main>
-            <!-- Research Input Section -->
-            <section class="research-input">
-                <div class="input-group">
-                    <input
-                        type="text"
-                        id="query-input"
-                        placeholder="Enter your research query (e.g., 'Impact of AI on healthcare in 2024')"
-                        autocomplete="off"
-                    >
-                    <button id="search-btn" onclick="executeResearch()">
-                        <span class="btn-text">Research</span>
-                        <span class="btn-loading" style="display: none;">
-                            <span class="spinner"></span>
-                        </span>
+    <div class="app-container">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="16" cy="16" r="14" stroke="url(#logo-gradient)" stroke-width="2"/>
+                        <circle cx="10" cy="13" r="3" fill="url(#logo-gradient)"/>
+                        <circle cx="22" cy="13" r="3" fill="url(#logo-gradient)"/>
+                        <circle cx="16" cy="21" r="3" fill="url(#logo-gradient)"/>
+                        <path d="M10 13L16 21M22 13L16 21M10 13L22 13" stroke="url(#logo-gradient)" stroke-width="1.5"/>
+                        <defs>
+                            <linearGradient id="logo-gradient" x1="0" y1="0" x2="32" y2="32">
+                                <stop stop-color="#6366f1"/>
+                                <stop offset="1" stop-color="#8b5cf6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="brand-text">ResearchAgent</span>
+            </div>
+            <div class="nav-actions">
+                <a href="/docs" class="nav-link">API Docs</a>
+                <a href="/agents" class="nav-link">Agents</a>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                    <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Hero Section with Query Input -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">AI-Powered</span> Research
+                </h1>
+                <p class="hero-subtitle">
+                    Harness multiple AI agents working together to research, analyze, and synthesize information from across the web.
+                </p>
+
+                <!-- Query Input Card -->
+                <div class="query-card">
+                    <div class="query-input-wrapper">
+                        <div class="input-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="M21 21l-4.35-4.35"/>
+                            </svg>
+                        </div>
+                        <textarea
+                            id="query-input"
+                            placeholder="What would you like to research? Try: 'Latest advancements in quantum computing 2024' or 'Compare renewable energy solutions for homes'"
+                            rows="2"
+                        ></textarea>
+                        <button id="search-btn" class="search-btn" onclick="executeResearch()">
+                            <span class="btn-text">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                                </svg>
+                                Research
+                            </span>
+                            <span class="btn-loading">
+                                <div class="spinner"></div>
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="query-options">
+                        <div class="option-group">
+                            <label for="depth-select">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                                </svg>
+                                Depth
+                            </label>
+                            <select id="depth-select">
+                                <option value="quick">Quick</option>
+                                <option value="standard" selected>Standard</option>
+                                <option value="deep">Deep</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label for="format-select">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                </svg>
+                                Format
+                            </label>
+                            <select id="format-select">
+                                <option value="report" selected>Full Report</option>
+                                <option value="summary">Summary</option>
+                                <option value="bullets">Bullet Points</option>
+                            </select>
+                        </div>
+                        <div class="option-group checkbox-option">
+                            <input type="checkbox" id="stream-check" checked>
+                            <label for="stream-check">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                                </svg>
+                                Live Progress
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent Indicators -->
+                <div class="agents-showcase">
+                    <div class="agent-pill" id="agent-perplexity">
+                        <div class="agent-avatar perplexity">
+                            <span>P</span>
+                        </div>
+                        <div class="agent-details">
+                            <span class="agent-name">Perplexity</span>
+                            <span class="agent-task">Web Search</span>
+                        </div>
+                        <div class="agent-pulse"></div>
+                    </div>
+                    <div class="agent-connector"></div>
+                    <div class="agent-pill" id="agent-claude">
+                        <div class="agent-avatar claude">
+                            <span>C</span>
+                        </div>
+                        <div class="agent-details">
+                            <span class="agent-name">Claude</span>
+                            <span class="agent-task">Analysis</span>
+                        </div>
+                        <div class="agent-pulse"></div>
+                    </div>
+                    <div class="agent-connector"></div>
+                    <div class="agent-pill" id="agent-gemini">
+                        <div class="agent-avatar gemini">
+                            <span>G</span>
+                        </div>
+                        <div class="agent-details">
+                            <span class="agent-name">Gemini</span>
+                            <span class="agent-task">Validation</span>
+                        </div>
+                        <div class="agent-pulse"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Section -->
+        <section class="progress-section" id="progress-section">
+            <div class="progress-card">
+                <div class="progress-header">
+                    <h3>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                        </svg>
+                        Research in Progress
+                    </h3>
+                    <span class="progress-percent" id="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" id="progress-bar"></div>
+                </div>
+                <p class="progress-status" id="progress-text">Initializing agents...</p>
+            </div>
+        </section>
+
+        <!-- Message Log -->
+        <section class="log-section" id="message-log-section">
+            <div class="section-header">
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    Agent Communication
+                </h3>
+                <button class="btn-ghost btn-sm" id="clear-log-btn" onclick="clearLog()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    Clear
+                </button>
+            </div>
+            <div class="log-container" id="log-container">
+                <div class="log-empty">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <p>Agent messages will appear here during research</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section" id="results-section">
+            <div class="results-header">
+                <div class="results-title">
+                    <h2>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 12l2 2 4-4"/>
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        Research Results
+                    </h2>
+                    <div class="results-meta" id="results-meta"></div>
+                </div>
+                <div class="results-actions">
+                    <div class="download-dropdown">
+                        <button class="btn-secondary" id="download-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Download
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu" id="download-menu">
+                            <button onclick="downloadResults('markdown')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                Markdown (.md)
+                            </button>
+                            <button onclick="downloadResults('text')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                </svg>
+                                Plain Text (.txt)
+                            </button>
+                            <button onclick="downloadResults('html')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="16 18 22 12 16 6"/>
+                                    <polyline points="8 6 2 12 8 18"/>
+                                </svg>
+                                HTML (.html)
+                            </button>
+                            <button onclick="downloadResults('json')">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+                                </svg>
+                                JSON (.json)
+                            </button>
+                            <hr>
+                            <button onclick="copyToClipboard()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                                Copy to Clipboard
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn-ghost" onclick="newResearch()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        New Research
                     </button>
                 </div>
-                <div class="options">
-                    <label>
-                        Depth:
-                        <select id="depth-select">
-                            <option value="quick">Quick (1-2 min)</option>
-                            <option value="standard" selected>Standard (3-5 min)</option>
-                            <option value="deep">Deep (5-10 min)</option>
-                        </select>
-                    </label>
-                    <label>
-                        Output:
-                        <select id="format-select">
-                            <option value="report" selected>Full Report</option>
-                            <option value="summary">Summary</option>
-                            <option value="bullets">Bullet Points</option>
-                        </select>
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="stream-check" checked>
-                        Stream Progress
-                    </label>
-                </div>
-            </section>
-
-            <!-- Agent Status Section -->
-            <section class="agent-status">
-                <h2>Agent Activity</h2>
-                <div class="agents-grid">
-                    <div class="agent-card" id="agent-perplexity">
-                        <div class="agent-icon">P</div>
-                        <div class="agent-info">
-                            <span class="agent-name">Perplexity</span>
-                            <span class="agent-role">Web Research</span>
-                        </div>
-                        <div class="agent-status-indicator" id="status-perplexity">
-                            <span class="status-dot"></span>
-                            <span class="status-text">Idle</span>
-                        </div>
-                    </div>
-                    <div class="agent-card" id="agent-claude">
-                        <div class="agent-icon">C</div>
-                        <div class="agent-info">
-                            <span class="agent-name">Claude</span>
-                            <span class="agent-role">Analysis</span>
-                        </div>
-                        <div class="agent-status-indicator" id="status-claude">
-                            <span class="status-dot"></span>
-                            <span class="status-text">Idle</span>
-                        </div>
-                    </div>
-                    <div class="agent-card" id="agent-gemini">
-                        <div class="agent-icon">G</div>
-                        <div class="agent-info">
-                            <span class="agent-name">Gemini</span>
-                            <span class="agent-role">Validation</span>
-                        </div>
-                        <div class="agent-status-indicator" id="status-gemini">
-                            <span class="status-dot"></span>
-                            <span class="status-text">Idle</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Progress Section -->
-            <section class="progress-section" id="progress-section" style="display: none;">
-                <h2>Workflow Progress</h2>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
-                </div>
-                <div class="progress-text" id="progress-text">Initializing...</div>
-            </section>
-
-            <!-- Message Log Section -->
-            <section class="message-log" id="message-log-section">
-                <h2>A2A Message Log</h2>
-                <div class="log-container" id="log-container">
-                    <div class="log-placeholder">Messages will appear here during research...</div>
-                </div>
-            </section>
-
-            <!-- Results Section -->
-            <section class="results-section" id="results-section" style="display: none;">
-                <h2>Research Results</h2>
-                <div class="results-meta" id="results-meta"></div>
-                <div class="results-content" id="results-content"></div>
-            </section>
-        </main>
-
-        <footer>
-            <div class="footer-links">
-                <a href="/health">Health Check</a>
-                <a href="/agents">Agent Registry</a>
-                <a href="/docs">API Docs</a>
             </div>
-            <p class="footer-text">A2A Protocol Research System v1.0</p>
+            <div class="results-content" id="results-content"></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="gradient-text">ResearchAgent</span>
+                    <span class="footer-version">v1.0</span>
+                </div>
+                <div class="footer-links">
+                    <a href="/health">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                        Health
+                    </a>
+                    <a href="/agents">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        Agents
+                    </a>
+                    <a href="/docs">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        API Docs
+                    </a>
+                </div>
+                <p class="footer-powered">Powered by A2A Protocol</p>
+            </div>
         </footer>
     </div>
 
-    <!-- Markdown Renderer -->
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <svg class="toast-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <circle cx="12" cy="12" r="10"/>
+            </svg>
+            <span class="toast-message" id="toast-message">Success!</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="/static/app.js"></script>
 </body>
