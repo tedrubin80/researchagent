@@ -80,13 +80,13 @@
                             <span class="status-text">Idle</span>
                         </div>
                     </div>
-                    <div class="agent-card" id="agent-gemini">
-                        <div class="agent-icon">G</div>
+                    <div class="agent-card" id="agent-openai">
+                        <div class="agent-icon">O</div>
                         <div class="agent-info">
-                            <span class="agent-name">Gemini</span>
+                            <span class="agent-name">OpenAI</span>
                             <span class="agent-role">Validation</span>
                         </div>
-                        <div class="agent-status-indicator" id="status-gemini">
+                        <div class="agent-status-indicator" id="status-openai">
                             <span class="status-dot"></span>
                             <span class="status-text">Idle</span>
                         </div>
@@ -113,7 +113,17 @@
 
             <!-- Results Section -->
             <section class="results-section" id="results-section" style="display: none;">
-                <h2>Research Results</h2>
+                <div class="results-header">
+                    <h2>Research Results</h2>
+                    <div class="download-buttons" id="download-buttons" style="display: none;">
+                        <button class="download-btn" onclick="downloadPDF()" title="Download as PDF">
+                            <span class="download-icon">PDF</span>
+                        </button>
+                        <button class="download-btn" onclick="downloadDOCX()" title="Download as Word Document">
+                            <span class="download-icon">DOCX</span>
+                        </button>
+                    </div>
+                </div>
                 <div class="results-meta" id="results-meta"></div>
                 <div class="results-content" id="results-content"></div>
             </section>

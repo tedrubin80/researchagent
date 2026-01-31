@@ -5,12 +5,11 @@ using the Google Gemini API.
 """
 
 import base64
-import json
 import logging
 from typing import Any, AsyncIterator, Optional
 
-import google.generativeai as genai
-from google.generativeai.types import GenerateContentResponse
+from google import genai
+from google.genai import types
 
 from src.a2a.protocol import AgentCard
 from src.a2a.messages import (
@@ -37,12 +36,12 @@ class GeminiAgent(BaseAgent):
     - Large document processing
     """
 
-    DEFAULT_MODEL = "gemini-1.5-pro"
+    DEFAULT_MODEL = "gemini-2.0-flash"
 
     def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
         super().__init__(agent_id="gemini", api_key=api_key)
         self._model_name = model or self.DEFAULT_MODEL
-        self._model = None
+        self._client = None
 
     @property
     def card(self) -> AgentCard:
@@ -53,19 +52,18 @@ class GeminiAgent(BaseAgent):
         if not self.api_key:
             raise ValueError("Google API key is required")
 
-        genai.configure(api_key=self.api_key)
-        self._model = genai.GenerativeModel(self._model_name)
+        self._client = genai.Client(api_key=self.api_key)
         self._initialized = True
         logger.info(f"Gemini agent initialized with model: {self._model_name}")
 
     async def shutdown(self) -> None:
         """Clean up resources."""
-        self._model = None
+        self._client = None
         self._initialized = False
 
     async def execute(self, task: Task) -> TaskResponse:
         """Execute a task using Gemini."""
-        if not self._initialized or not self._model:
+        if not self._initialized or not self._client:
             return self._create_error_response(
                 task.id,
                 "Gemini agent not initialized"
@@ -101,7 +99,7 @@ class GeminiAgent(BaseAgent):
 
     async def execute_streaming(self, task: Task) -> AsyncIterator[TaskResponse]:
         """Execute with streaming responses."""
-        if not self._initialized or not self._model:
+        if not self._initialized or not self._client:
             yield self._create_error_response(
                 task.id,
                 "Gemini agent not initialized"
@@ -111,13 +109,13 @@ class GeminiAgent(BaseAgent):
         message_text = task.request.message.get_text()
 
         try:
-            response = await self._model.generate_content_async(
-                message_text,
-                stream=True
+            response = self._client.models.generate_content_stream(
+                model=self._model_name,
+                contents=message_text
             )
 
             accumulated_text = ""
-            async for chunk in response:
+            for chunk in response:
                 if chunk.text:
                     accumulated_text += chunk.text
                     yield TaskResponse.in_progress(
@@ -132,6 +130,14 @@ class GeminiAgent(BaseAgent):
         except Exception as e:
             logger.error(f"Gemini streaming error: {e}")
             yield self._create_error_response(task.id, str(e))
+
+    async def _generate_content(self, contents: Any) -> str:
+        """Generate content using the Gemini API."""
+        response = await self._client.aio.models.generate_content(
+            model=self._model_name,
+            contents=contents
+        )
+        return response.text
 
     async def _image_analysis(
         self,
@@ -164,34 +170,35 @@ class GeminiAgent(BaseAgent):
         if text and text != "Image Analysis":
             base_prompt = f"{text}\n\n{base_prompt}"
 
-        # Prepare image content
-        content_parts = [base_prompt]
+        # Prepare content parts for the new API
+        content_parts = [types.Part.from_text(base_prompt)]
 
         # Add image from file parts
         for fp in file_parts:
             if fp.data:
                 # Base64 encoded data
                 image_bytes = base64.b64decode(fp.data)
-                content_parts.append({
-                    "mime_type": fp.mime_type,
-                    "data": image_bytes
-                })
+                content_parts.append(types.Part.from_bytes(
+                    data=image_bytes,
+                    mime_type=fp.mime_type
+                ))
 
-        # Add image from URL or base64 in metadata
+        # Add image from base64 in metadata
         if image_data:
             image_bytes = base64.b64decode(image_data)
-            content_parts.append({
-                "mime_type": "image/jpeg",
-                "data": image_bytes
-            })
+            content_parts.append(types.Part.from_bytes(
+                data=image_bytes,
+                mime_type="image/jpeg"
+            ))
 
         # If only URL provided, note limitation
         if image_url and not image_data and not file_parts:
-            content_parts[0] += f"\n\n[Note: Please analyze the image at: {image_url}]"
+            content_parts[0] = types.Part.from_text(
+                base_prompt + f"\n\n[Note: Please analyze the image at: {image_url}]"
+            )
 
         try:
-            response = await self._model.generate_content_async(content_parts)
-            result_text = response.text
+            result_text = await self._generate_content(content_parts)
 
             artifacts = [
                 Artifact.json_data(
@@ -251,8 +258,7 @@ Claims to validate:
 
 Provide a structured validation report."""
 
-        response = await self._model.generate_content_async(prompt)
-        result_text = response.text
+        result_text = await self._generate_content(prompt)
 
         # Create validation summary artifact
         validation_data = {
@@ -302,8 +308,7 @@ Provide:
 3. Cross-references between documents (if multiple)
 4. Summary of main points"""
 
-        response = await self._model.generate_content_async(prompt)
-        result_text = response.text
+        result_text = await self._generate_content(prompt)
 
         artifacts = [
             Artifact.json_data(
@@ -347,8 +352,7 @@ Task: {task_instruction}
 
 Note: If video URL is not directly accessible, provide general guidance on video analysis approach."""
 
-        response = await self._model.generate_content_async(prompt)
-        result_text = response.text
+        result_text = await self._generate_content(prompt)
 
         artifacts = [
             Artifact.json_data(
@@ -379,8 +383,7 @@ Provide:
 3. Key insights
 4. Recommendations for further investigation"""
 
-        response = await self._model.generate_content_async(prompt)
-        result_text = response.text
+        result_text = await self._generate_content(prompt)
 
         return self._create_text_response(task_id, result_text)
 
@@ -388,9 +391,12 @@ Provide:
         """Check Gemini API connectivity."""
         base = await super().health_check()
 
-        if self._initialized and self._model:
+        if self._initialized and self._client:
             try:
-                response = await self._model.generate_content_async("ping")
+                response = await self._client.aio.models.generate_content(
+                    model=self._model_name,
+                    contents="ping"
+                )
                 base["api_status"] = "connected"
                 base["model"] = self._model_name
             except Exception as e:

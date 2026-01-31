@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Research Agent System</title>
+    <link rel="stylesheet" href="/static/admin/admin.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login View -->
+        <div id="login-view" class="view">
+            <div class="login-container">
+                <h1>Research Agent Admin</h1>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required autofocus>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <div id="login-error" class="error-message hidden"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Dashboard View -->
+        <div id="dashboard-view" class="view hidden">
+            <header>
+                <h1>Research Agent Admin</h1>
+                <div class="header-actions">
+                    <span id="session-info"></span>
+                    <button id="logout-btn" class="btn btn-secondary">Logout</button>
+                </div>
+            </header>
+
+            <!-- Password Change Warning -->
+            <div id="password-warning" class="alert alert-warning hidden">
+                <strong>Security Warning:</strong> You are using the default password.
+                Please change it in the Security tab.
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="tabs">
+                <button class="tab active" data-tab="status">System Status</button>
+                <button class="tab" data-tab="priorities">Provider Priorities</button>
+                <button class="tab" data-tab="ollama">Ollama Settings</button>
+                <button class="tab" data-tab="security">Security</button>
+            </nav>
+
+            <!-- Tab Content -->
+            <main class="tab-content">
+                <!-- System Status Tab -->
+                <section id="tab-status" class="tab-panel active">
+                    <h2>System Status</h2>
+                    <div class="status-grid">
+                        <div class="status-card">
+                            <h3>Admin</h3>
+                            <div id="admin-status">Loading...</div>
+                        </div>
+                        <div class="status-card">
+                            <h3>Agents</h3>
+                            <div id="agents-status">Loading...</div>
+                        </div>
+                    </div>
+                    <button id="refresh-status" class="btn btn-secondary">Refresh Status</button>
+                </section>
+
+                <!-- Provider Priorities Tab -->
+                <section id="tab-priorities" class="tab-panel hidden">
+                    <h2>Provider Priorities</h2>
+                    <p class="description">Configure which AI provider handles each skill, with fallback options.</p>
+
+                    <div id="priorities-form">
+                        <!-- Dynamically populated -->
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="save-priorities" class="btn btn-primary">Save Priorities</button>
+                        <button id="reset-priorities" class="btn btn-secondary">Reset to Defaults</button>
+                    </div>
+                </section>
+
+                <!-- Ollama Settings Tab -->
+                <section id="tab-ollama" class="tab-panel hidden">
+                    <h2>Ollama Settings</h2>
+                    <p class="description">Configure the local Ollama LLM as a fallback provider.</p>
+
+                    <div id="ollama-status-box" class="status-box">
+                        <span id="ollama-connection-status">Checking connection...</span>
+                    </div>
+
+                    <form id="ollama-form">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="ollama-enabled" name="enabled">
+                                <span>Enable Ollama Agent</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ollama-url">Base URL</label>
+                            <input type="text" id="ollama-url" name="baseUrl"
+                                   value="http://localhost:11434/v1" placeholder="http://localhost:11434/v1">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ollama-model">Model</label>
+                            <input type="text" id="ollama-model" name="model"
+                                   value="llama3.1" placeholder="llama3.1">
+                            <small>Common models: llama3.1, mistral, codellama, phi3</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save Ollama Settings</button>
+                            <button type="button" id="test-ollama" class="btn btn-secondary">Test Connection</button>
+                        </div>
+                    </form>
+
+                    <div class="info-box">
+                        <h4>Setup Instructions</h4>
+                        <ol>
+                            <li>Install Ollama: <code>curl -fsSL https://ollama.com/install.sh | sh</code></li>
+                            <li>Start Ollama: <code>ollama serve</code></li>
+                            <li>Pull a model: <code>ollama pull llama3.1</code></li>
+                            <li>Enable and configure above, then restart the application</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <!-- Security Tab -->
+                <section id="tab-security" class="tab-panel hidden">
+                    <h2>Security Settings</h2>
+
+                    <div class="security-section">
+                        <h3>Change Password</h3>
+                        <form id="password-form">
+                            <div class="form-group">
+                                <label for="current-password">Current Password</label>
+                                <input type="password" id="current-password" name="currentPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">New Password</label>
+                                <input type="password" id="new-password" name="newPassword" required minlength="8">
+                                <small>Minimum 8 characters</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">Confirm New Password</label>
+                                <input type="password" id="confirm-password" name="confirmPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Change Password</button>
+                        </form>
+                    </div>
+
+                    <div class="security-section">
+                        <h3>Session Settings</h3>
+                        <form id="session-form">
+                            <div class="form-group">
+                                <label for="session-timeout">Session Timeout (hours)</label>
+                                <input type="number" id="session-timeout" name="timeoutHours"
+                                       min="1" max="168" value="24">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Session Timeout</button>
+                        </form>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Toast notifications -->
+        <div id="toast-container"></div>
+    </div>
+
+    <script src="/static/admin/admin.js"></script>
+</body>
+</html>

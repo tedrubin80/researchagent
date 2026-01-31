@@ -259,10 +259,270 @@ CLAUDE_CARD = AgentCard(
 
 
 # =============================================================================
+# OPENAI AGENT CARD
+# Primary Role: Multimodal Processing & Validation
+# Strengths: Image/video analysis, large context windows, cross-referencing
+# =============================================================================
+
+OPENAI_CARD = AgentCard(
+    name="OpenAI GPT Agent",
+    description="Multimodal processing and cross-validation specialist. Excels at analyzing images, processing large documents, and validating information across sources.",
+    version="1.0.0",
+    url="http://localhost:8000/agents/openai",
+    provider="OpenAI",
+    capabilities=AgentCapabilities(
+        streaming=True,
+        push_notifications=False,
+        batch_processing=True,
+        multimodal=True,
+        long_context=True
+    ),
+    skills=[
+        AgentSkill(
+            id="image-analysis",
+            name="Image Analysis",
+            description="Extract information from charts, graphs, diagrams, and images",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "image_url": {
+                        "type": "string",
+                        "description": "URL of the image to analyze"
+                    },
+                    "image_data": {
+                        "type": "string",
+                        "description": "Base64 encoded image data"
+                    },
+                    "analysis_type": {
+                        "type": "string",
+                        "enum": ["general", "chart", "diagram", "text_extraction", "medical"],
+                        "default": "general"
+                    },
+                    "questions": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Specific questions about the image"
+                    }
+                }
+            },
+            tags=["multimodal", "images", "vision"]
+        ),
+        AgentSkill(
+            id="cross-validate",
+            name="Cross Validation",
+            description="Verify claims and information across multiple sources",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "claims": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "claim": {"type": "string"},
+                                "source": {"type": "string"}
+                            }
+                        },
+                        "description": "Claims to validate"
+                    },
+                    "reference_sources": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Additional sources to check against"
+                    }
+                },
+                "required": ["claims"]
+            },
+            tags=["validation", "verification"]
+        ),
+        AgentSkill(
+            id="large-context",
+            name="Large Document Processing",
+            description="Process and analyze very long documents",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "documents": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "content": {"type": "string"},
+                                "name": {"type": "string"}
+                            }
+                        },
+                        "description": "Documents to process"
+                    },
+                    "task": {
+                        "type": "string",
+                        "description": "What to do with the documents"
+                    }
+                },
+                "required": ["documents", "task"]
+            },
+            tags=["documents", "long-context"]
+        ),
+        AgentSkill(
+            id="video-analysis",
+            name="Video Analysis",
+            description="Analyze video content and extract information",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "video_url": {
+                        "type": "string",
+                        "description": "URL of the video"
+                    },
+                    "timestamps": {
+                        "type": "array",
+                        "items": {"type": "number"},
+                        "description": "Specific timestamps to analyze"
+                    },
+                    "task": {
+                        "type": "string",
+                        "description": "What to extract from the video"
+                    }
+                },
+                "required": ["video_url"]
+            },
+            tags=["multimodal", "video"]
+        )
+    ],
+    metadata={
+        "rate_limit": "60 requests/minute",
+        "context_window": 128000,
+        "model": "gpt-4o",
+        "strengths": [
+            "Image/video analysis",
+            "Large context windows",
+            "Cross-referencing",
+            "Multimodal understanding"
+        ]
+    }
+)
+
+
+# =============================================================================
 # GEMINI AGENT CARD
 # Primary Role: Multimodal Processing & Validation
 # Strengths: Image/video analysis, large context windows, cross-referencing
 # =============================================================================
+
+# =============================================================================
+# OLLAMA AGENT CARD
+# Primary Role: Local LLM Fallback
+# Strengths: Offline operation, privacy, no API costs
+# =============================================================================
+
+OLLAMA_CARD = AgentCard(
+    name="Ollama Local Agent",
+    description="Local LLM for offline research. Acts as a fallback provider when cloud APIs are unavailable. Runs entirely on local hardware for privacy and cost savings.",
+    version="1.0.0",
+    url="http://localhost:8000/agents/ollama",
+    provider="Ollama (Local)",
+    capabilities=AgentCapabilities(
+        streaming=True,
+        push_notifications=False,
+        batch_processing=True,
+        multimodal=False,
+        long_context=False
+    ),
+    skills=[
+        AgentSkill(
+            id="synthesis",
+            name="Research Synthesis",
+            description="Combine multiple sources into coherent, well-structured analysis (fallback)",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "sources": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "content": {"type": "string"},
+                                "citation": {"type": "string"},
+                                "relevance": {"type": "number"}
+                            }
+                        },
+                        "description": "Sources to synthesize"
+                    },
+                    "output_format": {
+                        "type": "string",
+                        "enum": ["report", "summary", "bullet_points", "narrative"],
+                        "default": "report"
+                    },
+                    "target_length": {
+                        "type": "string",
+                        "enum": ["brief", "moderate", "comprehensive"],
+                        "default": "moderate"
+                    }
+                },
+                "required": ["sources"]
+            },
+            tags=["synthesis", "writing", "research", "fallback"]
+        ),
+        AgentSkill(
+            id="document-analysis",
+            name="Document Analysis",
+            description="Analyze and extract insights from documents (fallback)",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "string",
+                        "description": "Document content to analyze"
+                    },
+                    "analysis_type": {
+                        "type": "string",
+                        "enum": ["summary", "detailed", "themes", "entities"],
+                        "default": "detailed"
+                    },
+                    "focus_areas": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Specific areas to focus on"
+                    }
+                },
+                "required": ["content"]
+            },
+            tags=["analysis", "documents", "fallback"]
+        ),
+        AgentSkill(
+            id="general-query",
+            name="General Query",
+            description="Handle general queries and questions",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "The query to process"
+                    }
+                },
+                "required": ["query"]
+            },
+            tags=["general", "query", "fallback"]
+        )
+    ],
+    metadata={
+        "rate_limit": "unlimited (local)",
+        "context_window": 8192,
+        "model": "llama3.1",
+        "strengths": [
+            "Offline operation",
+            "No API costs",
+            "Privacy (data stays local)",
+            "Fallback availability"
+        ],
+        "limitations": [
+            "Lower quality than cloud models",
+            "Limited context window",
+            "No multimodal support"
+        ]
+    }
+)
+
 
 GEMINI_CARD = AgentCard(
     name="Gemini Multimodal Agent",
@@ -480,7 +740,9 @@ ORCHESTRATOR_CARD = AgentCard(
 AGENT_CARDS = {
     "perplexity": PERPLEXITY_CARD,
     "claude": CLAUDE_CARD,
+    "openai": OPENAI_CARD,
     "gemini": GEMINI_CARD,
+    "ollama": OLLAMA_CARD,
     "orchestrator": ORCHESTRATOR_CARD
 }
 

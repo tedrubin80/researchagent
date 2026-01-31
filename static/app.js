@@ -7,6 +7,7 @@
 let isResearching = false;
 let currentWorkflowId = null;
 let eventSource = null;
+let currentResult = null;  // Store current result for export
 
 // DOM Elements
 const queryInput = document.getElementById('query-input');
@@ -26,7 +27,7 @@ const resultsContent = document.getElementById('results-content');
 const agentStatuses = {
     perplexity: document.getElementById('status-perplexity'),
     claude: document.getElementById('status-claude'),
-    gemini: document.getElementById('status-gemini')
+    openai: document.getElementById('status-openai')
 };
 
 /**
@@ -195,9 +196,9 @@ function parseMessageForAgentActivity(message) {
         logMessage('Claude', message, 'claude');
     }
 
-    if (lowerMsg.includes('gemini') || lowerMsg.includes('validat')) {
-        setAgentStatus('gemini', 'working', 'Validating...');
-        logMessage('Gemini', message, 'gemini');
+    if (lowerMsg.includes('openai') || lowerMsg.includes('gpt') || lowerMsg.includes('validat')) {
+        setAgentStatus('openai', 'working', 'Validating...');
+        logMessage('OpenAI', message, 'openai');
     }
 
     if (lowerMsg.includes('orchestrator') || lowerMsg.includes('synthesi')) {
@@ -332,6 +333,15 @@ function truncateMessage(message, maxLength) {
 function showResults(result) {
     resultsSection.style.display = 'block';
 
+    // Store result for export
+    currentResult = result;
+
+    // Show download buttons
+    const downloadButtons = document.getElementById('download-buttons');
+    if (downloadButtons) {
+        downloadButtons.style.display = 'flex';
+    }
+
     // Meta information
     resultsMeta.innerHTML = `
         <div class="meta-item">
@@ -357,6 +367,92 @@ function showResults(result) {
 
     // Scroll to results
     resultsSection.scrollIntoView({ behavior: 'smooth' });
+}
+
+/**
+ * Download results as PDF
+ */
+async function downloadPDF() {
+    if (!currentResult) {
+        alert('No results to download');
+        return;
+    }
+
+    try {
+        const response = await fetch('/export/pdf', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                query: currentResult.query,
+                report: currentResult.report,
+                sources_count: currentResult.sources_count,
+                duration_seconds: currentResult.duration_seconds
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('PDF export failed');
+        }
+
+        // Download the file
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `research_report_${new Date().toISOString().slice(0,10)}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+    } catch (error) {
+        console.error('PDF download failed:', error);
+        alert('Failed to download PDF: ' + error.message);
+    }
+}
+
+/**
+ * Download results as DOCX
+ */
+async function downloadDOCX() {
+    if (!currentResult) {
+        alert('No results to download');
+        return;
+    }
+
+    try {
+        const response = await fetch('/export/docx', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                query: currentResult.query,
+                report: currentResult.report,
+                sources_count: currentResult.sources_count,
+                duration_seconds: currentResult.duration_seconds
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('DOCX export failed');
+        }
+
+        // Download the file
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `research_report_${new Date().toISOString().slice(0,10)}.docx`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+    } catch (error) {
+        console.error('DOCX download failed:', error);
+        alert('Failed to download DOCX: ' + error.message);
+    }
 }
 
 /**

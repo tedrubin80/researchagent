@@ -1,0 +1,41 @@
+{
+  "priorities": {
+    "synthesis": {
+      "primary": "claude",
+      "fallbacks": [
+        "ollama"
+      ]
+    },
+    "document-analysis": {
+      "primary": "claude",
+      "fallbacks": [
+        "ollama",
+        "gemini"
+      ]
+    },
+    "web-search": {
+      "primary": "perplexity",
+      "fallbacks": []
+    },
+    "cross-validate": {
+      "primary": "gemini",
+      "fallbacks": [
+        "claude",
+        "ollama"
+      ]
+    },
+    "general-query": {
+      "primary": "claude",
+      "fallbacks": [
+        "ollama"
+      ]
+    }
+  },
+  "ollama": {
+    "enabled": false,
+    "base_url": "http://localhost:11434/v1",
+    "model": "llama3.1"
+  },
+  "admin_password_hash": null,
+  "session_timeout_hours": 24
+}

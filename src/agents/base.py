@@ -5,6 +5,7 @@ ensuring consistent behavior across different AI providers.
 """
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from typing import Any, AsyncIterator, Optional
 import logging
 
@@ -18,6 +19,48 @@ from src.a2a.messages import (
 from src.a2a.task_manager import Task, TaskManager
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ProviderPriority:
+    """Priority configuration for a skill's provider fallback chain."""
+    skill_id: str
+    primary: str  # Primary agent ID
+    fallbacks: list[str] = field(default_factory=list)  # Ordered fallback agent IDs
+
+    def get_ordered_agents(self) -> list[str]:
+        """Get all agents in priority order (primary first, then fallbacks)."""
+        return [self.primary] + self.fallbacks
+
+
+# Default provider priorities
+DEFAULT_PRIORITIES: dict[str, ProviderPriority] = {
+    "synthesis": ProviderPriority(
+        skill_id="synthesis",
+        primary="claude",
+        fallbacks=["ollama"]
+    ),
+    "document-analysis": ProviderPriority(
+        skill_id="document-analysis",
+        primary="claude",
+        fallbacks=["ollama", "gemini"]
+    ),
+    "web-search": ProviderPriority(
+        skill_id="web-search",
+        primary="perplexity",
+        fallbacks=[]  # No local fallback for web search
+    ),
+    "cross-validate": ProviderPriority(
+        skill_id="cross-validate",
+        primary="gemini",
+        fallbacks=["claude", "ollama"]
+    ),
+    "general-query": ProviderPriority(
+        skill_id="general-query",
+        primary="claude",
+        fallbacks=["ollama"]
+    ),
+}
 
 
 class BaseAgent(ABC):
@@ -136,11 +179,13 @@ class AgentRegistry:
     - Agent registration and lookup
     - Task routing based on skills
     - Health monitoring
+    - Provider priority and fallback support
     """
 
     def __init__(self):
         self._agents: dict[str, BaseAgent] = {}
         self._skill_index: dict[str, list[str]] = {}  # skill_id -> [agent_ids]
+        self._priorities: dict[str, ProviderPriority] = DEFAULT_PRIORITIES.copy()
 
     def register(self, agent: BaseAgent) -> None:
         """Register an agent."""
@@ -229,3 +274,203 @@ class AgentRegistry:
 
     def __contains__(self, agent_id: str) -> bool:
         return agent_id in self._agents
+
+    # =========================================================================
+    # Provider Priority and Fallback Methods
+    # =========================================================================
+
+    def set_priorities(self, priorities: dict[str, ProviderPriority]) -> None:
+        """Configure provider priorities for skills.
+
+        Args:
+            priorities: Dict mapping skill_id to ProviderPriority config
+        """
+        self._priorities.update(priorities)
+        logger.info(f"Updated priorities for skills: {list(priorities.keys())}")
+
+    def get_priorities(self) -> dict[str, ProviderPriority]:
+        """Get current priority configuration."""
+        return self._priorities.copy()
+
+    def set_priority(
+        self,
+        skill_id: str,
+        primary: str,
+        fallbacks: Optional[list[str]] = None
+    ) -> None:
+        """Set priority for a single skill.
+
+        Args:
+            skill_id: The skill to configure
+            primary: Primary agent ID
+            fallbacks: Ordered list of fallback agent IDs
+        """
+        self._priorities[skill_id] = ProviderPriority(
+            skill_id=skill_id,
+            primary=primary,
+            fallbacks=fallbacks or []
+        )
+        logger.info(f"Set priority for {skill_id}: primary={primary}, fallbacks={fallbacks}")
+
+    def get_agent_with_fallback(self, skill_id: str) -> Optional[BaseAgent]:
+        """Get the best available agent for a skill, considering priorities and health.
+
+        Returns the primary agent if available and healthy, otherwise tries
+        fallbacks in order until one is found.
+
+        Args:
+            skill_id: The skill to find an agent for
+
+        Returns:
+            The best available agent, or None if no agent can handle the skill
+        """
+        priority = self._priorities.get(skill_id)
+
+        if priority:
+            # Use configured priority order
+            agent_order = priority.get_ordered_agents()
+        else:
+            # No priority configured, use skill index
+            agent_order = self._skill_index.get(skill_id, [])
+
+        for agent_id in agent_order:
+            agent = self._agents.get(agent_id)
+            if agent and agent._initialized and agent.has_skill(skill_id):
+                logger.debug(f"Selected agent {agent_id} for skill {skill_id}")
+                return agent
+
+        # Fallback to any agent with the skill
+        agents = self.get_by_skill(skill_id)
+        for agent in agents:
+            if agent._initialized:
+                logger.debug(f"Using fallback agent {agent.agent_id} for skill {skill_id}")
+                return agent
+
+        logger.warning(f"No available agent found for skill: {skill_id}")
+        return None
+
+    async def execute_with_fallback(
+        self,
+        skill_id: str,
+        task: Task,
+        max_attempts: int = 3
+    ) -> TaskResponse:
+        """Execute a task with automatic fallback on failure.
+
+        Tries the primary agent first, then falls back to alternatives
+        if the primary fails.
+
+        Args:
+            skill_id: The skill to use
+            task: The task to execute
+            max_attempts: Maximum number of agents to try
+
+        Returns:
+            TaskResponse from the first successful agent
+        """
+        priority = self._priorities.get(skill_id)
+        if priority:
+            agent_order = priority.get_ordered_agents()
+        else:
+            agent_order = self._skill_index.get(skill_id, [])
+
+        last_error = None
+        attempts = 0
+
+        for agent_id in agent_order:
+            if attempts >= max_attempts:
+                break
+
+            agent = self._agents.get(agent_id)
+            if not agent or not agent._initialized:
+                continue
+
+            if not agent.has_skill(skill_id):
+                continue
+
+            attempts += 1
+            try:
+                logger.info(f"Attempting execution with agent: {agent_id}")
+                response = await agent.execute(task)
+
+                # Check if response indicates an error
+                if response.status == "failed":
+                    last_error = response.error or "Unknown error"
+                    logger.warning(f"Agent {agent_id} failed: {last_error}, trying fallback...")
+                    continue
+
+                logger.info(f"Successfully executed task with agent: {agent_id}")
+                return response
+
+            except Exception as e:
+                last_error = str(e)
+                logger.warning(f"Agent {agent_id} raised exception: {e}, trying fallback...")
+                continue
+
+        # All attempts failed
+        error_msg = f"All {attempts} agents failed for skill {skill_id}. Last error: {last_error}"
+        logger.error(error_msg)
+        return TaskResponse.error(task_id=task.id, error_message=error_msg)
+
+    async def execute_with_fallback_streaming(
+        self,
+        skill_id: str,
+        task: Task,
+        max_attempts: int = 3
+    ) -> AsyncIterator[TaskResponse]:
+        """Execute a task with streaming and automatic fallback.
+
+        Args:
+            skill_id: The skill to use
+            task: The task to execute
+            max_attempts: Maximum number of agents to try
+
+        Yields:
+            TaskResponse objects from the first successful agent
+        """
+        priority = self._priorities.get(skill_id)
+        if priority:
+            agent_order = priority.get_ordered_agents()
+        else:
+            agent_order = self._skill_index.get(skill_id, [])
+
+        last_error = None
+        attempts = 0
+
+        for agent_id in agent_order:
+            if attempts >= max_attempts:
+                break
+
+            agent = self._agents.get(agent_id)
+            if not agent or not agent._initialized:
+                continue
+
+            if not agent.has_skill(skill_id):
+                continue
+
+            attempts += 1
+            try:
+                logger.info(f"Attempting streaming execution with agent: {agent_id}")
+                had_success = False
+
+                async for response in agent.execute_streaming(task):
+                    if response.status == "failed":
+                        last_error = response.error or "Unknown error"
+                        logger.warning(f"Agent {agent_id} streaming failed: {last_error}")
+                        break
+                    had_success = True
+                    yield response
+
+                if had_success:
+                    logger.info(f"Successfully executed streaming task with agent: {agent_id}")
+                    return
+
+            except Exception as e:
+                last_error = str(e)
+                logger.warning(f"Agent {agent_id} streaming exception: {e}, trying fallback...")
+                continue
+
+        # All attempts failed
+        error_msg = f"All {attempts} agents failed for skill {skill_id}. Last error: {last_error}"
+        logger.error(error_msg)
+        yield TaskResponse.error(task_id=task.id, error_message=error_msg)

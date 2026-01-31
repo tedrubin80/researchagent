@@ -13,7 +13,7 @@ load_dotenv()
 class APIConfig:
     """API key configuration for AI providers."""
     anthropic_api_key: Optional[str] = None
-    google_api_key: Optional[str] = None
+    openai_api_key: Optional[str] = None
     perplexity_api_key: Optional[str] = None
 
     @classmethod
@@ -21,7 +21,7 @@ class APIConfig:
         """Load API configuration from environment variables."""
         return cls(
             anthropic_api_key=os.getenv("ANTHROPIC_API_KEY"),
-            google_api_key=os.getenv("GOOGLE_API_KEY"),
+            openai_api_key=os.getenv("OPENAI_API_KEY"),
             perplexity_api_key=os.getenv("PERPLEXITY_API_KEY")
         )
 
@@ -29,7 +29,7 @@ class APIConfig:
         """Check which API keys are configured."""
         return {
             "anthropic": bool(self.anthropic_api_key),
-            "google": bool(self.google_api_key),
+            "openai": bool(self.openai_api_key),
             "perplexity": bool(self.perplexity_api_key)
         }
 
@@ -38,8 +38,8 @@ class APIConfig:
         agents = []
         if self.anthropic_api_key:
             agents.append("claude")
-        if self.google_api_key:
-            agents.append("gemini")
+        if self.openai_api_key:
+            agents.append("openai")
         if self.perplexity_api_key:
             agents.append("perplexity")
         return agents
@@ -71,8 +71,11 @@ class AgentConfig:
     task_timeout_seconds: int = 120
     enable_streaming: bool = True
     claude_model: str = "claude-sonnet-4-20250514"
-    gemini_model: str = "gemini-1.5-pro"
+    openai_model: str = "gpt-4o"
     perplexity_model: str = "llama-3.1-sonar-large-128k-online"
+    # Ollama configuration
+    ollama_base_url: str = "http://localhost:11434/v1"
+    ollama_model: str = "llama3.1"
 
     @classmethod
     def from_env(cls) -> "AgentConfig":
@@ -81,7 +84,9 @@ class AgentConfig:
             default_orchestrator=os.getenv("DEFAULT_ORCHESTRATOR", "claude"),
             max_parallel_tasks=int(os.getenv("MAX_PARALLEL_TASKS", "3")),
             task_timeout_seconds=int(os.getenv("TASK_TIMEOUT_SECONDS", "120")),
-            enable_streaming=os.getenv("ENABLE_STREAMING", "true").lower() == "true"
+            enable_streaming=os.getenv("ENABLE_STREAMING", "true").lower() == "true",
+            ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1"),
+            ollama_model=os.getenv("OLLAMA_MODEL", "llama3.1")
         )
 
 

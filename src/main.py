@@ -26,13 +26,16 @@ from src.config import get_config
 from src.a2a.protocol import A2AProtocol, AgentCard
 from src.a2a.messages import A2AMessage, TaskRequest, TaskResponse
 from src.a2a.task_manager import Task, TaskManager
-from src.agents.base import AgentRegistry
+from src.agents.base import AgentRegistry, ProviderPriority
 from src.agents.cards import AGENT_CARDS, get_agent_card
 from src.agents.perplexity import PerplexityAgent
 from src.agents.claude import ClaudeAgent
-from src.agents.gemini import GeminiAgent
+from src.agents.openai import OpenAIAgent
+from src.agents.ollama import OllamaAgent
 from src.agents.orchestrator import OrchestratorAgent
 from src.workflows.research import ResearchWorkflow, ResearchConfig, ResearchDepth, OutputFormat
+from src.admin import AdminAuth, SettingsManager, admin_router
+from src.admin.routes import init_admin
 
 # Configure logging
 logging.basicConfig(
@@ -45,6 +48,8 @@ logger = logging.getLogger(__name__)
 task_manager = TaskManager()
 agent_registry = AgentRegistry()
 research_workflow: Optional[ResearchWorkflow] = None
+settings_manager: Optional[SettingsManager] = None
+admin_auth: Optional[AdminAuth] = None
 
 
 # =============================================================================
@@ -94,6 +99,25 @@ async def lifespan(app: FastAPI):
     logger.info("Starting Multi-Agent Research System...")
     config = get_config()
 
+    # Initialize settings manager and admin auth
+    global settings_manager, admin_auth
+    settings_manager = SettingsManager()
+    settings = settings_manager.load()
+
+    # Initialize admin auth with stored password hash
+    admin_auth = AdminAuth(
+        password_hash=settings.admin_password_hash,
+        session_timeout_hours=settings.session_timeout_hours
+    )
+
+    # Initialize admin module
+    init_admin(
+        auth=admin_auth,
+        settings=settings_manager,
+        get_registry_callback=lambda: agent_registry
+    )
+    logger.info("Admin module initialized")
+
     # Initialize agents based on available API keys
     if config.api.perplexity_api_key:
         perplexity = PerplexityAgent(api_key=config.api.perplexity_api_key)
@@ -116,17 +140,45 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.warning(f"✗ Claude agent failed to initialize: {e}")
 
-    if config.api.google_api_key:
-        gemini = GeminiAgent(
-            api_key=config.api.google_api_key,
-            model=config.agent.gemini_model
+    if config.api.openai_api_key:
+        openai_agent = OpenAIAgent(
+            api_key=config.api.openai_api_key,
+            model=config.agent.openai_model
         )
         try:
-            await gemini.initialize()
-            agent_registry.register(gemini)
-            logger.info("✓ Gemini agent initialized")
+            await openai_agent.initialize()
+            agent_registry.register(openai_agent)
+            logger.info("✓ OpenAI agent initialized")
         except Exception as e:
-            logger.warning(f"✗ Gemini agent failed to initialize: {e}")
+            logger.warning(f"✗ OpenAI agent failed to initialize: {e}")
+
+    # Initialize Ollama agent if enabled in settings
+    ollama_config = settings_manager.get_ollama_config()
+    if ollama_config.enabled:
+        ollama = OllamaAgent(
+            base_url=ollama_config.base_url,
+            model=ollama_config.model
+        )
+        try:
+            await ollama.initialize()
+            agent_registry.register(ollama)
+            logger.info(f"✓ Ollama agent initialized (model: {ollama_config.model})")
+        except Exception as e:
+            logger.warning(f"✗ Ollama agent failed to initialize: {e}")
+    else:
+        logger.info("○ Ollama agent disabled (enable in admin panel)")
+
+    # Apply provider priorities from settings
+    priorities_config = settings_manager.get_priorities()
+    priorities = {}
+    for skill_id, config_data in priorities_config.items():
+        priorities[skill_id] = ProviderPriority(
+            skill_id=skill_id,
+            primary=config_data.get("primary", "claude"),
+            fallbacks=config_data.get("fallbacks", [])
+        )
+    agent_registry.set_priorities(priorities)
+    logger.info(f"Applied provider priorities for {len(priorities)} skills")
 
     # Initialize orchestrator
     orchestrator = OrchestratorAgent(agent_registry, task_manager)
@@ -169,6 +221,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount admin router
+app.include_router(admin_router)
+
 
 # =============================================================================
 # Health & Status Endpoints
@@ -185,9 +240,22 @@ async def health_check():
     )
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    """Root endpoint with system info."""
+    """Serve the research UI as homepage."""
+    try:
+        with open("static/index.html", "r") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(
+            content="<h1>UI not available</h1><p>Static files not found.</p>",
+            status_code=404
+        )
+
+
+@app.get("/api/info")
+async def api_info():
+    """API endpoint with system info."""
     config = get_config()
     return {
         "name": "Multi-Agent Research System",
@@ -202,7 +270,7 @@ async def root():
             "agents": "/agents",
             "research": "/research",
             "a2a": "/a2a",
-            "ui": "/ui"
+            "api_info": "/api/info"
         }
     }
 
@@ -320,6 +388,74 @@ async def get_research_status(workflow_id: str):
         raise HTTPException(status_code=404, detail=f"Workflow not found: {workflow_id}")
 
     return status
+
+
+# =============================================================================
+# Export Endpoints (PDF/DOCX Download)
+# =============================================================================
+
+class ExportRequest(BaseModel):
+    """Request to export research results."""
+    query: str = Field(..., description="The research query")
+    report: str = Field(..., description="The report content (markdown)")
+    sources_count: Optional[int] = Field(default=None, description="Number of sources")
+    duration_seconds: Optional[float] = Field(default=None, description="Research duration")
+
+
+@app.post("/export/pdf")
+async def export_pdf(request: ExportRequest):
+    """Export research results as PDF."""
+    from src.export import export_to_pdf
+    from fastapi.responses import Response
+
+    try:
+        pdf_bytes = export_to_pdf(
+            query=request.query,
+            report=request.report,
+            sources_count=request.sources_count,
+            duration_seconds=request.duration_seconds
+        )
+
+        filename = f"research_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"'
+            }
+        )
+    except Exception as e:
+        logger.error(f"PDF export failed: {e}")
+        raise HTTPException(status_code=500, detail=f"PDF export failed: {str(e)}")
+
+
+@app.post("/export/docx")
+async def export_docx(request: ExportRequest):
+    """Export research results as DOCX."""
+    from src.export import export_to_docx
+    from fastapi.responses import Response
+
+    try:
+        docx_bytes = export_to_docx(
+            query=request.query,
+            report=request.report,
+            sources_count=request.sources_count,
+            duration_seconds=request.duration_seconds
+        )
+
+        filename = f"research_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
+
+        return Response(
+            content=docx_bytes,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"'
+            }
+        )
+    except Exception as e:
+        logger.error(f"DOCX export failed: {e}")
+        raise HTTPException(status_code=500, detail=f"DOCX export failed: {str(e)}")
 
 
 # =============================================================================

@@ -228,7 +228,7 @@ section h2 {
     background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
-#agent-gemini .agent-icon {
+#agent-openai .agent-icon {
     background: linear-gradient(135deg, #4f8cff, #3b82f6);
 }
 
@@ -344,7 +344,7 @@ section h2 {
 
 .log-sender.perplexity { color: var(--accent-green); }
 .log-sender.claude { color: var(--accent-orange); }
-.log-sender.gemini { color: var(--accent-blue); }
+.log-sender.openai { color: var(--accent-blue); }
 .log-sender.orchestrator { color: var(--accent-purple); }
 
 .log-method {
@@ -354,6 +354,52 @@ section h2 {
 /* Results Section */
 .results-section {
     background: var(--bg-secondary);
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.results-header h2 {
+    margin-bottom: 0;
+}
+
+.download-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.download-btn {
+    padding: 0.5rem 1rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.download-btn:hover {
+    background: var(--accent-blue);
+    border-color: var(--accent-blue);
+    transform: translateY(-1px);
+}
+
+.download-btn:active {
+    transform: translateY(0);
+}
+
+.download-icon {
+    font-size: 0.8rem;
+    font-weight: 700;
 }
 
 .results-meta {
