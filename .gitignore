@@ -56,3 +56,10 @@ Thumbs.db
 # Project specific
 *.db
 *.sqlite3
+data/
+scripts/setup-*.sh
+*.pdf
+PORTFOLIO.md
+
+# Claude Code
+.claude/

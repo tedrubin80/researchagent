@@ -1,146 +1,133 @@
 # Multi-Agent Research System
 
-A sophisticated research assistant powered by the A2A (Agent-to-Agent) Protocol, combining the strengths of Perplexity, Claude, and Gemini AI agents.
+A production-ready research platform that orchestrates multiple AI agents — **Claude**, **GPT-4**, and **Perplexity** — using the [A2A (Agent-to-Agent) Protocol](https://github.com/google/A2A) to deliver comprehensive, cited research reports in real time.
 
-## Architecture
+**[Live Demo](https://feedyourresearch.online)** | **[API Docs](https://feedyourresearch.online/docs)**
+
+---
+
+## How It Works
+
+A user submits a research query. The **Orchestrator** breaks it into sub-tasks and dispatches them to specialized agents via the A2A protocol. Each agent does what it's best at, and the results are assembled into a structured report.
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    USER QUERY                                    │
-│         "Research the impact of AI on healthcare in 2024"       │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                   ORCHESTRATOR AGENT                             │
-│    • Parses query intent                                        │
-│    • Creates research plan                                      │
-│    • Assigns subtasks via A2A                                   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-          ┌───────────────────┼───────────────────┐
-          ▼                   ▼                   ▼
-┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
-│   PERPLEXITY     │ │     CLAUDE       │ │     GEMINI       │
-│                  │ │                  │ │                  │
-│ Task: Discovery  │ │ Task: Analysis   │ │ Task: Validation │
-│                  │ │                  │ │                  │
-│ • Search web     │ │ • Analyze docs   │ │ • Cross-check    │
-│ • Find sources   │ │ • Identify gaps  │ │ • Process images │
-│ • Get citations  │ │ • Synthesize     │ │ • Verify claims  │
-└──────────────────┘ └──────────────────┘ └──────────────────┘
-          │                   │                   │
-          └───────────────────┼───────────────────┘
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    FINAL SYNTHESIS                               │
-│              (Claude assembles final report)                    │
-└─────────────────────────────────────────────────────────────────┘
+                        User Query
+                            │
+                            ▼
+                    ┌───────────────┐
+                    │  Orchestrator │
+                    │  (Planning &  │
+                    │   Routing)    │
+                    └──────┬────────┘
+               ┌───────────┼───────────┐
+               ▼           ▼           ▼
+        ┌────────────┐ ┌────────┐ ┌──────────┐
+        │ Perplexity │ │ Claude │ │  OpenAI  │
+        │ Web Search │ │Analysis│ │Validation│
+        └─────┬──────┘ └───┬────┘ └────┬─────┘
+              └─────────────┼──────────┘
+                            ▼
+                     Final Report
+                 (PDF / DOCX / Markdown)
 ```
 
-## Agent Roles & Capabilities
+### Workflow Phases
 
-| Agent | Primary Role | Strengths |
-|-------|--------------|-----------|
-| **Perplexity** | Web Research & Source Discovery | Real-time web search, citation gathering, fact verification |
-| **Claude** | Analysis & Synthesis | Deep reasoning, nuanced writing, document analysis, structured outputs |
-| **Gemini** | Multimodal Processing & Validation | Image/video analysis, large context windows, cross-referencing |
+| Phase | Agent | What Happens |
+|-------|-------|--------------|
+| **1. Planning** | Orchestrator | Parses query, identifies sub-topics, creates research plan |
+| **2. Discovery** | Perplexity | Searches the web for relevant sources and citations |
+| **3. Analysis** | Claude | Deep analysis, reasoning, and structured synthesis |
+| **4. Validation** | OpenAI GPT-4 | Cross-validates claims, checks consistency |
+| **5. Synthesis** | Claude | Assembles final report with sources and follow-up questions |
+
+---
 
 ## Features
 
-- **A2A Protocol**: Standardized JSON-RPC based communication between agents
-- **Agent Cards**: Discoverable capability manifests for each agent
-- **Parallel Execution**: Efficient task distribution and parallel processing
-- **Streaming Progress**: Real-time updates during research workflows
-- **Web UI**: Interactive demo interface for research queries
-- **RESTful API**: Complete API for programmatic access
+- **A2A Protocol** — JSON-RPC 2.0 based agent-to-agent communication with discoverable agent cards and typed skill schemas
+- **Real-Time Streaming** — Server-Sent Events deliver live progress as agents collaborate
+- **Multi-Format Export** — Download results as PDF, DOCX, Markdown, HTML, or JSON
+- **Provider Fallbacks** — Configurable priority chains with automatic failover per skill
+- **Local Ollama Support** — Offline operation using local models as fallback
+- **Admin Panel** — Web UI to configure agents, set provider priorities, and manage settings
+- **Showcase Mode** — Static demo page that works without API keys
 
-## Installation
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Backend** | Python 3.12, FastAPI, asyncio, Pydantic |
+| **AI Providers** | Anthropic Claude, OpenAI GPT-4, Perplexity, Ollama |
+| **Protocol** | A2A (Agent-to-Agent) with JSON-RPC 2.0 |
+| **Streaming** | Server-Sent Events via sse-starlette |
+| **Export** | fpdf2 (PDF), python-docx (DOCX) |
+| **Frontend** | Vanilla JS, CSS3 (dark/light themes), marked.js |
+| **Server** | Uvicorn, Nginx, Let's Encrypt |
+
+---
+
+## Getting Started
 
 ### Prerequisites
 
 - Python 3.10+
-- API keys for at least one provider:
-  - Anthropic API key (for Claude)
-  - Google API key (for Gemini)
-  - Perplexity API key (for Perplexity)
+- At least one API key (or Ollama for local-only operation)
 
-### Setup
+### Installation
 
-1. Clone the repository:
 ```bash
 git clone https://github.com/tedrubin80/researchagent.git
 cd researchagent
-```
 
-2. Create a virtual environment:
-```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
-3. Install dependencies:
-```bash
 pip install -r requirements.txt
 ```
 
-4. Configure environment variables:
+### Configuration
+
 ```bash
 cp .env.example .env
 # Edit .env with your API keys
 ```
 
-5. Run the server:
+The system starts with whatever keys are available. Missing providers are skipped gracefully.
+
+### Run
+
 ```bash
 python -m src.main
 ```
 
-6. Open the web UI at http://localhost:8000/ui
+Open **http://localhost:8000** for the showcase page, or use the API directly.
 
-## Configuration
-
-Edit `.env` file with your settings:
-
-```env
-# API Keys
-ANTHROPIC_API_KEY=your_anthropic_key
-GOOGLE_API_KEY=your_google_key
-PERPLEXITY_API_KEY=your_perplexity_key
-
-# Server
-HOST=0.0.0.0
-PORT=8000
-DEBUG=true
-
-# Agent Settings
-DEFAULT_ORCHESTRATOR=claude
-MAX_PARALLEL_TASKS=3
-TASK_TIMEOUT_SECONDS=120
-```
+---
 
 ## API Reference
 
-### Research Endpoint
-
-Execute a research workflow:
+### Research
 
 ```bash
+# Execute a research workflow
 POST /research
 Content-Type: application/json
 
 {
     "query": "Impact of AI on healthcare in 2024",
-    "depth": "standard",  // quick, standard, deep
-    "output_format": "report",  // report, summary, bullets
-    "stream": false
+    "depth": "standard",        # quick | standard | deep
+    "output_format": "report",  # report | summary | bullets
+    "stream": true              # Enable SSE streaming
 }
 ```
 
-### A2A Protocol Endpoint
-
-JSON-RPC endpoint for A2A communication:
+### A2A Protocol (JSON-RPC)
 
 ```bash
+# Send a task to a specific agent
 POST /a2a
 Content-Type: application/json
 
@@ -160,122 +147,131 @@ Content-Type: application/json
 }
 ```
 
-### Agent Endpoints
+### All Endpoints
 
-- `GET /agents` - List all agents
-- `GET /agents/{id}` - Get agent details
-- `GET /agents/{id}/card` - Get agent card (A2A protocol)
-- `POST /agents/{id}/execute` - Execute task on specific agent
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | Showcase page (HTML) |
+| `/research` | POST | Execute research workflow |
+| `/a2a` | POST | A2A Protocol JSON-RPC endpoint |
+| `/agents` | GET | List registered agents |
+| `/agents/{id}` | GET | Agent details |
+| `/agents/{id}/card` | GET | Agent card (A2A discovery) |
+| `/agents/{id}/execute` | POST | Execute task on specific agent |
+| `/export/pdf` | POST | Download report as PDF |
+| `/export/docx` | POST | Download report as DOCX |
+| `/health` | GET | System health check |
+| `/api/info` | GET | System information |
+| `/admin` | GET | Admin panel |
 
-### Health Check
-
-```bash
-GET /health
-```
-
-## Workflow Phases
-
-1. **Planning**: Parse query, create research plan
-2. **Discovery**: Web search via Perplexity
-3. **Analysis**: Deep analysis via Claude
-4. **Validation**: Cross-validation via Gemini
-5. **Synthesis**: Final report assembly via Claude
-
-## A2A Message Flow Example
-
-```json
-// 1. Orchestrator → Perplexity (Discovery)
-{
-    "jsonrpc": "2.0",
-    "method": "tasks/send",
-    "params": {
-        "id": "task-001",
-        "message": {
-            "role": "user",
-            "parts": [{
-                "type": "text",
-                "text": "Search for AI healthcare FDA approvals 2024"
-            }]
-        },
-        "skillId": "web-search"
-    }
-}
-
-// 2. Perplexity → Orchestrator (Results)
-{
-    "jsonrpc": "2.0",
-    "result": {
-        "id": "task-001",
-        "status": "completed",
-        "artifacts": [{
-            "type": "application/json",
-            "parts": [{"type": "data", "data": {"sources": [...]}}]
-        }]
-    }
-}
-```
+---
 
 ## Project Structure
 
 ```
 researchagent/
 ├── src/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI application
-│   ├── config.py            # Configuration management
+│   ├── main.py                 # FastAPI app, endpoints, lifespan
+│   ├── config.py               # Environment-based configuration
+│   ├── export.py               # PDF and DOCX generation
 │   ├── a2a/
-│   │   ├── protocol.py      # A2A protocol types
-│   │   ├── messages.py      # Message structures
-│   │   └── task_manager.py  # Task lifecycle management
+│   │   ├── protocol.py         # A2A types: AgentCard, TaskStatus, AgentSkill
+│   │   ├── messages.py         # A2AMessage, TaskRequest, TaskResponse, Artifact
+│   │   └── task_manager.py     # Task lifecycle and state management
 │   ├── agents/
-│   │   ├── base.py          # Base agent interface
-│   │   ├── cards.py         # Agent card definitions
-│   │   ├── perplexity.py    # Perplexity agent
-│   │   ├── claude.py        # Claude agent
-│   │   ├── gemini.py        # Gemini agent
-│   │   └── orchestrator.py  # Workflow orchestrator
-│   └── workflows/
-│       └── research.py      # Research workflow
+│   │   ├── base.py             # BaseAgent ABC, AgentRegistry, ProviderPriority
+│   │   ├── cards.py            # Predefined agent card definitions
+│   │   ├── claude.py           # Anthropic Claude agent
+│   │   ├── openai.py           # OpenAI GPT-4 agent
+│   │   ├── perplexity.py       # Perplexity search agent
+│   │   ├── ollama.py           # Local Ollama fallback agent
+│   │   └── orchestrator.py     # Workflow orchestrator (task routing)
+│   ├── workflows/
+│   │   └── research.py         # ResearchWorkflow, ResearchConfig, ResearchResult
+│   └── admin/
+│       ├── auth.py             # Admin authentication
+│       ├── routes.py           # Admin API endpoints
+│       └── settings.py         # Runtime settings management
 ├── static/
-│   ├── index.html           # Web UI
-│   ├── style.css
-│   └── app.js
+│   ├── index.html              # Showcase page
+│   ├── style.css               # Styles (dark/light themes)
+│   ├── app.js                  # Simulated demo + theme toggle
+│   └── admin/                  # Admin panel UI
 ├── tests/
-│   └── test_a2a.py
+│   └── test_a2a.py             # Protocol tests
+├── docs/
+│   └── technical_decisions.md  # Architecture decisions and trade-offs
+├── .env.example                # Environment template
 ├── requirements.txt
 ├── pyproject.toml
-└── README.md
+└── LICENSE                     # MIT
 ```
+
+---
+
+## Architecture Decisions
+
+Key design choices documented in [`docs/technical_decisions.md`](docs/technical_decisions.md):
+
+- **OpenAI over Gemini** — Clearer pricing and more stable API
+- **SSE over WebSockets** — Research progress is unidirectional; SSE is simpler and firewall-friendly
+- **fpdf2 over WeasyPrint** — Pure Python, no system dependencies
+- **Vanilla JS over React** — Single page, no build step needed
+- **Graceful degradation** — Missing providers are skipped; Ollama provides local fallback
+- **A2A Protocol** — Standardized agent interop with JSON-RPC 2.0 and skill-based routing
+
+---
+
+## Provider Priority System
+
+Each skill has a configurable fallback chain:
+
+```python
+# Example: synthesis skill tries Claude first, falls back to Ollama
+ProviderPriority(
+    skill_id="synthesis",
+    primary="claude",
+    fallbacks=["ollama"]
+)
+
+# Web search has no fallback (requires internet)
+ProviderPriority(
+    skill_id="web-search",
+    primary="perplexity",
+    fallbacks=[]
+)
+```
+
+Priorities are configurable via the admin panel or `data/settings.json`.
+
+---
 
 ## Development
 
-### Running Tests
-
 ```bash
+# Install dev dependencies
+pip install -e ".[dev]"
+
+# Run tests
 pytest tests/
-```
 
-### Code Formatting
-
-```bash
+# Format code
 black src/
 ruff check src/
 ```
 
+---
+
 ## License
 
-MIT License
+[MIT](LICENSE)
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+---
 
 ## Acknowledgments
 
-- [A2A Protocol](https://github.com/google/A2A) - Agent-to-Agent communication protocol
-- [Anthropic](https://anthropic.com) - Claude AI
-- [Google](https://deepmind.google) - Gemini AI
-- [Perplexity](https://perplexity.ai) - Perplexity AI
+- [A2A Protocol](https://github.com/google/A2A) — Agent-to-Agent communication specification
+- [Anthropic](https://anthropic.com) — Claude AI
+- [OpenAI](https://openai.com) — GPT-4
+- [Perplexity](https://perplexity.ai) — Perplexity AI
+- [Ollama](https://ollama.ai) — Local model runtime

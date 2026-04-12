@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Research Agent - Multi-Agent AI Research</title>
+    <title>Multi-Agent Research System — A2A Protocol Showcase</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Animated Background -->
@@ -36,8 +36,14 @@
                 <span class="brand-text">ResearchAgent</span>
             </div>
             <div class="nav-actions">
-                <a href="/docs" class="nav-link">API Docs</a>
-                <a href="/agents" class="nav-link">Agents</a>
+                <a href="#architecture" class="nav-link">Architecture</a>
+                <a href="#demo" class="nav-link">Live Demo</a>
+                <a href="#code" class="nav-link">Code</a>
+                <a href="https://github.com/tedrubin80/researchagent" class="nav-link" target="_blank" rel="noopener">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: middle;">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                </a>
                 <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
                     <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="5"/>
@@ -50,18 +56,257 @@
             </div>
         </nav>
 
-        <!-- Hero Section with Query Input -->
+        <!-- Hero Section -->
         <section class="hero">
             <div class="hero-content">
+                <div class="hero-badge">Open Source Project</div>
                 <h1 class="hero-title">
-                    <span class="gradient-text">AI-Powered</span> Research
+                    <span class="gradient-text">Multi-Agent</span> Research System
                 </h1>
                 <p class="hero-subtitle">
-                    Harness multiple AI agents working together to research, analyze, and synthesize information from across the web.
+                    A production-ready platform that orchestrates Claude, GPT-4, and Perplexity
+                    using the <strong>A2A (Agent-to-Agent) Protocol</strong> to deliver
+                    comprehensive, cited research reports in real time.
                 </p>
 
-                <!-- Query Input Card -->
-                <div class="query-card">
+                <div class="hero-cta">
+                    <a href="#demo" class="btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                        Try the Demo
+                    </a>
+                    <a href="#code" class="btn-secondary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="16 18 22 12 16 6"/>
+                            <polyline points="8 6 2 12 8 18"/>
+                        </svg>
+                        View Code
+                    </a>
+                </div>
+
+                <!-- Tech Stack Pills -->
+                <div class="tech-stack">
+                    <span class="tech-pill">Python 3.12</span>
+                    <span class="tech-pill">FastAPI</span>
+                    <span class="tech-pill">A2A Protocol</span>
+                    <span class="tech-pill">SSE Streaming</span>
+                    <span class="tech-pill">Claude API</span>
+                    <span class="tech-pill">OpenAI API</span>
+                    <span class="tech-pill">Perplexity API</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Section -->
+        <section class="section" id="architecture">
+            <div class="section-header-block">
+                <h2 class="section-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    System Architecture
+                </h2>
+                <p class="section-desc">Three specialized AI agents coordinated through a central orchestrator via the A2A protocol.</p>
+            </div>
+
+            <!-- Architecture Diagram -->
+            <div class="arch-diagram">
+                <div class="arch-row">
+                    <div class="arch-box arch-user">
+                        <div class="arch-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <span class="arch-label">User Query</span>
+                        <span class="arch-sublabel">Research UI / API</span>
+                    </div>
+                </div>
+                <div class="arch-connector-v"></div>
+                <div class="arch-row">
+                    <div class="arch-box arch-orchestrator">
+                        <div class="arch-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                            </svg>
+                        </div>
+                        <span class="arch-label">Orchestrator</span>
+                        <span class="arch-sublabel">Task Planning &amp; Routing</span>
+                    </div>
+                </div>
+                <div class="arch-connector-v arch-connector-split"></div>
+                <div class="arch-row arch-agents-row">
+                    <div class="arch-box arch-agent-perplexity">
+                        <div class="arch-agent-avatar perplexity">P</div>
+                        <span class="arch-label">Perplexity</span>
+                        <span class="arch-sublabel">Web Search &amp; Sources</span>
+                        <div class="arch-tags">
+                            <span>Real-time search</span>
+                            <span>Citations</span>
+                        </div>
+                    </div>
+                    <div class="arch-box arch-agent-claude">
+                        <div class="arch-agent-avatar claude">C</div>
+                        <span class="arch-label">Claude</span>
+                        <span class="arch-sublabel">Analysis &amp; Synthesis</span>
+                        <div class="arch-tags">
+                            <span>Deep reasoning</span>
+                            <span>Writing</span>
+                        </div>
+                    </div>
+                    <div class="arch-box arch-agent-openai">
+                        <div class="arch-agent-avatar openai">O</div>
+                        <span class="arch-label">OpenAI GPT-4</span>
+                        <span class="arch-sublabel">Validation &amp; QA</span>
+                        <div class="arch-tags">
+                            <span>Cross-check</span>
+                            <span>Multimodal</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="arch-connector-v arch-connector-merge"></div>
+                <div class="arch-row">
+                    <div class="arch-box arch-output">
+                        <div class="arch-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <span class="arch-label">Final Report</span>
+                        <span class="arch-sublabel">PDF / DOCX / Markdown / JSON</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow Phases -->
+            <div class="phases">
+                <div class="phase">
+                    <div class="phase-num">1</div>
+                    <h4>Planning</h4>
+                    <p>Orchestrator parses the query, identifies sub-topics, and creates a research plan</p>
+                </div>
+                <div class="phase">
+                    <div class="phase-num">2</div>
+                    <h4>Discovery</h4>
+                    <p>Perplexity searches the web for relevant sources and citations</p>
+                </div>
+                <div class="phase">
+                    <div class="phase-num">3</div>
+                    <h4>Analysis</h4>
+                    <p>Claude performs deep analysis and synthesizes findings into structured output</p>
+                </div>
+                <div class="phase">
+                    <div class="phase-num">4</div>
+                    <h4>Validation</h4>
+                    <p>OpenAI cross-validates claims, checks for inconsistencies, and verifies accuracy</p>
+                </div>
+                <div class="phase">
+                    <div class="phase-num">5</div>
+                    <h4>Synthesis</h4>
+                    <p>Final report assembled with citations, confidence scores, and follow-up questions</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="section" id="features">
+            <div class="section-header-block">
+                <h2 class="section-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    Key Features
+                </h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: var(--accent-primary);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3>A2A Protocol</h3>
+                    <p>JSON-RPC 2.0 based agent-to-agent communication with discoverable agent cards and typed skill schemas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: var(--accent-success);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </div>
+                    <h3>Real-Time Streaming</h3>
+                    <p>Server-Sent Events deliver live progress updates as agents collaborate. Watch the research unfold in real time.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: var(--accent-warning);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3>Provider Fallbacks</h3>
+                    <p>Configurable priority chains with automatic failover. Local Ollama integration for offline operation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: var(--agent-openai);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <h3>Multi-Format Export</h3>
+                    <p>Download research as PDF, DOCX, Markdown, HTML, or JSON. Server-side rendering with fpdf2 and python-docx.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: var(--accent-secondary);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        </svg>
+                    </div>
+                    <h3>Admin Panel</h3>
+                    <p>Web-based admin interface to configure agents, set provider priorities, and manage the system.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="color: var(--accent-error);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                    </div>
+                    <h3>REST + JSON-RPC API</h3>
+                    <p>Full REST API for programmatic access plus standards-compliant A2A JSON-RPC endpoint for agent interop.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Demo Section -->
+        <section class="section" id="demo">
+            <div class="section-header-block">
+                <h2 class="section-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    Interactive Demo
+                </h2>
+                <p class="section-desc">See the multi-agent workflow in action. This is a simulated demo &mdash; no API keys required.</p>
+            </div>
+
+            <div class="demo-container">
+                <!-- Query Input -->
+                <div class="demo-query-card">
                     <div class="query-input-wrapper">
                         <div class="input-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -69,72 +314,29 @@
                                 <path d="M21 21l-4.35-4.35"/>
                             </svg>
                         </div>
-                        <textarea
-                            id="query-input"
-                            placeholder="What would you like to research? Try: 'Latest advancements in quantum computing 2024' or 'Compare renewable energy solutions for homes'"
-                            rows="2"
-                        ></textarea>
-                        <button id="search-btn" class="search-btn" onclick="executeResearch()">
+                        <textarea id="query-input" placeholder="Try: 'Impact of AI on healthcare in 2024' or 'Compare renewable energy solutions'" rows="2"></textarea>
+                        <button id="search-btn" class="search-btn" onclick="runDemo()">
                             <span class="btn-text">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
                                 </svg>
                                 Research
                             </span>
-                            <span class="btn-loading">
-                                <div class="spinner"></div>
-                            </span>
+                            <span class="btn-loading"><div class="spinner"></div></span>
                         </button>
                     </div>
-
-                    <div class="query-options">
-                        <div class="option-group">
-                            <label for="depth-select">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-                                </svg>
-                                Depth
-                            </label>
-                            <select id="depth-select">
-                                <option value="quick">Quick</option>
-                                <option value="standard" selected>Standard</option>
-                                <option value="deep">Deep</option>
-                            </select>
-                        </div>
-                        <div class="option-group">
-                            <label for="format-select">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
-                                    <line x1="16" y1="13" x2="8" y2="13"/>
-                                    <line x1="16" y1="17" x2="8" y2="17"/>
-                                </svg>
-                                Format
-                            </label>
-                            <select id="format-select">
-                                <option value="report" selected>Full Report</option>
-                                <option value="summary">Summary</option>
-                                <option value="bullets">Bullet Points</option>
-                            </select>
-                        </div>
-                        <div class="option-group checkbox-option">
-                            <input type="checkbox" id="stream-check" checked>
-                            <label for="stream-check">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-                                </svg>
-                                Live Progress
-                            </label>
-                        </div>
+                    <div class="demo-presets">
+                        <span class="preset-label">Try:</span>
+                        <button class="preset-btn" onclick="setQuery('Latest breakthroughs in quantum computing 2024')">Quantum Computing</button>
+                        <button class="preset-btn" onclick="setQuery('Compare electric vs hydrogen vehicles for consumers')">EV vs Hydrogen</button>
+                        <button class="preset-btn" onclick="setQuery('Impact of remote work on urban economies')">Remote Work</button>
                     </div>
                 </div>
 
-                <!-- Agent Indicators -->
-                <div class="agents-showcase">
+                <!-- Agent Status Bar -->
+                <div class="demo-agents" id="demo-agents">
                     <div class="agent-pill" id="agent-perplexity">
-                        <div class="agent-avatar perplexity">
-                            <span>P</span>
-                        </div>
+                        <div class="agent-avatar perplexity"><span>P</span></div>
                         <div class="agent-details">
                             <span class="agent-name">Perplexity</span>
                             <span class="agent-task">Web Search</span>
@@ -143,9 +345,7 @@
                     </div>
                     <div class="agent-connector"></div>
                     <div class="agent-pill" id="agent-claude">
-                        <div class="agent-avatar claude">
-                            <span>C</span>
-                        </div>
+                        <div class="agent-avatar claude"><span>C</span></div>
                         <div class="agent-details">
                             <span class="agent-name">Claude</span>
                             <span class="agent-task">Analysis</span>
@@ -154,9 +354,7 @@
                     </div>
                     <div class="agent-connector"></div>
                     <div class="agent-pill" id="agent-openai">
-                        <div class="agent-avatar openai">
-                            <span>O</span>
-                        </div>
+                        <div class="agent-avatar openai"><span>O</span></div>
                         <div class="agent-details">
                             <span class="agent-name">OpenAI</span>
                             <span class="agent-task">Validation</span>
@@ -164,143 +362,348 @@
                         <div class="agent-pulse"></div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <!-- Progress Section -->
-        <section class="progress-section" id="progress-section">
-            <div class="progress-card">
-                <div class="progress-header">
-                    <h3>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-                        </svg>
-                        Research in Progress
-                    </h3>
-                    <span class="progress-percent" id="progress-percent">0%</span>
-                </div>
-                <div class="progress-bar-track">
-                    <div class="progress-bar-fill" id="progress-bar"></div>
-                </div>
-                <p class="progress-status" id="progress-text">Initializing agents...</p>
-            </div>
-        </section>
-
-        <!-- Message Log -->
-        <section class="log-section" id="message-log-section">
-            <div class="section-header">
-                <h3>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                    Agent Communication
-                </h3>
-                <button class="btn-ghost btn-sm" id="clear-log-btn" onclick="clearLog()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                    </svg>
-                    Clear
-                </button>
-            </div>
-            <div class="log-container" id="log-container">
-                <div class="log-empty">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                    <p>Agent messages will appear here during research</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Results Section -->
-        <section class="results-section" id="results-section">
-            <div class="results-header">
-                <div class="results-title">
-                    <h2>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 12l2 2 4-4"/>
-                            <circle cx="12" cy="12" r="10"/>
-                        </svg>
-                        Research Results
-                    </h2>
-                    <div class="results-meta" id="results-meta"></div>
-                </div>
-                <div class="results-actions">
-                    <div class="download-dropdown">
-                        <button class="btn-secondary" id="download-btn">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="7 10 12 15 17 10"/>
-                                <line x1="12" y1="15" x2="12" y2="3"/>
-                            </svg>
-                            Download
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9"/>
-                            </svg>
-                        </button>
-                        <div class="dropdown-menu" id="download-menu">
-                            <button onclick="downloadPDF()">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
-                                </svg>
-                                PDF Document (.pdf)
-                            </button>
-                            <button onclick="downloadDOCX()">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
-                                </svg>
-                                Word Document (.docx)
-                            </button>
-                            <hr>
-                            <button onclick="downloadResults('markdown')">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
-                                </svg>
-                                Markdown (.md)
-                            </button>
-                            <button onclick="downloadResults('text')">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <line x1="16" y1="13" x2="8" y2="13"/>
-                                    <line x1="16" y1="17" x2="8" y2="17"/>
-                                </svg>
-                                Plain Text (.txt)
-                            </button>
-                            <button onclick="downloadResults('html')">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="16 18 22 12 16 6"/>
-                                    <polyline points="8 6 2 12 8 18"/>
-                                </svg>
-                                HTML (.html)
-                            </button>
-                            <button onclick="downloadResults('json')">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
-                                </svg>
-                                JSON (.json)
-                            </button>
-                            <hr>
-                            <button onclick="copyToClipboard()">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                                </svg>
-                                Copy to Clipboard
-                            </button>
-                        </div>
+                <!-- Progress -->
+                <div class="demo-progress" id="demo-progress">
+                    <div class="progress-header">
+                        <h3>Research in Progress</h3>
+                        <span class="progress-percent" id="progress-percent">0%</span>
                     </div>
-                    <button class="btn-ghost" onclick="newResearch()">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 5v14M5 12h14"/>
-                        </svg>
-                        New Research
-                    </button>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" id="progress-bar"></div>
+                    </div>
+                    <p class="progress-status" id="progress-text">Initializing agents...</p>
+                </div>
+
+                <!-- Message Log -->
+                <div class="demo-log" id="demo-log">
+                    <div class="log-header">
+                        <h3>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Agent Communication
+                        </h3>
+                    </div>
+                    <div class="log-container" id="log-container"></div>
+                </div>
+
+                <!-- Results -->
+                <div class="demo-results" id="demo-results">
+                    <div class="results-header">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 12l2 2 4-4"/>
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                            Research Results
+                        </h3>
+                        <span class="results-badge">Simulated</span>
+                    </div>
+                    <div class="results-content" id="results-content"></div>
                 </div>
             </div>
-            <div class="results-content" id="results-content"></div>
+        </section>
+
+        <!-- Code Showcase Section -->
+        <section class="section" id="code">
+            <div class="section-header-block">
+                <h2 class="section-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                    </svg>
+                    Code Showcase
+                </h2>
+                <p class="section-desc">Key implementation details from the codebase.</p>
+            </div>
+
+            <!-- Code Tabs -->
+            <div class="code-tabs">
+                <button class="code-tab active" onclick="switchTab('protocol')">A2A Protocol</button>
+                <button class="code-tab" onclick="switchTab('agents')">Agent Base</button>
+                <button class="code-tab" onclick="switchTab('workflow')">Research Workflow</button>
+                <button class="code-tab" onclick="switchTab('api')">API Endpoints</button>
+                <button class="code-tab" onclick="switchTab('a2a-message')">A2A Messages</button>
+            </div>
+
+            <div class="code-panel" id="code-panel">
+                <!-- Protocol Tab -->
+                <div class="code-block" id="tab-protocol">
+                    <div class="code-file">src/a2a/protocol.py</div>
+<pre><code><span class="kw">class</span> <span class="cls">TaskStatus</span>(<span class="cls">str</span>, <span class="cls">Enum</span>):
+    <span class="str">"""Task execution status states."""</span>
+    PENDING     = <span class="str">"pending"</span>
+    IN_PROGRESS = <span class="str">"in_progress"</span>
+    COMPLETED   = <span class="str">"completed"</span>
+    FAILED      = <span class="str">"failed"</span>
+    CANCELLED   = <span class="str">"cancelled"</span>
+    WAITING     = <span class="str">"waiting"</span>
+
+
+<span class="kw">class</span> <span class="cls">AgentSkill</span>(<span class="cls">BaseModel</span>):
+    <span class="str">"""Definition of a capability that an agent can perform."""</span>
+    id: <span class="cls">str</span>           = Field(..., description=<span class="str">"Unique skill identifier"</span>)
+    name: <span class="cls">str</span>         = Field(..., description=<span class="str">"Human-readable name"</span>)
+    description: <span class="cls">str</span>  = Field(..., description=<span class="str">"What this skill does"</span>)
+    input_schema: <span class="cls">Optional</span>[<span class="cls">dict</span>]  = Field(<span class="val">None</span>, alias=<span class="str">"inputSchema"</span>)
+    output_schema: <span class="cls">Optional</span>[<span class="cls">dict</span>] = Field(<span class="val">None</span>, alias=<span class="str">"outputSchema"</span>)
+    tags: <span class="cls">list</span>[<span class="cls">str</span>]   = Field(default_factory=<span class="cls">list</span>)
+
+
+<span class="kw">class</span> <span class="cls">AgentCard</span>(<span class="cls">BaseModel</span>):
+    <span class="str">"""Discoverable manifest describing an agent's identity and skills."""</span>
+    name: <span class="cls">str</span>
+    description: <span class="cls">str</span>
+    url: <span class="cls">Optional</span>[<span class="cls">HttpUrl</span>]   = <span class="val">None</span>
+    version: <span class="cls">str</span>              = <span class="str">"1.0.0"</span>
+    skills: <span class="cls">list</span>[<span class="cls">AgentSkill</span>] = Field(default_factory=<span class="cls">list</span>)
+    capabilities: <span class="cls">AgentCapabilities</span> = Field(default_factory=<span class="cls">AgentCapabilities</span>)</code></pre>
+                </div>
+
+                <!-- Agents Tab -->
+                <div class="code-block hidden" id="tab-agents">
+                    <div class="code-file">src/agents/base.py</div>
+<pre><code><span class="kw">class</span> <span class="cls">BaseAgent</span>(<span class="cls">ABC</span>):
+    <span class="str">"""Abstract base class for all A2A agents.
+
+    Each agent implementation must:
+    1. Provide an agent card describing its capabilities
+    2. Implement the execute method for processing tasks
+    3. Optionally support streaming responses
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, agent_id: <span class="cls">str</span>, api_key: <span class="cls">Optional</span>[<span class="cls">str</span>] = <span class="val">None</span>):
+        self.agent_id = agent_id
+        self.api_key = api_key
+        self._initialized = <span class="val">False</span>
+
+    <span class="decorator">@abstractmethod</span>
+    <span class="kw">async def</span> <span class="fn">execute</span>(self, task: <span class="cls">Task</span>) -> <span class="cls">TaskResponse</span>:
+        <span class="str">"""Execute a task and return the result."""</span>
+        ...
+
+    <span class="decorator">@abstractmethod</span>
+    <span class="kw">async def</span> <span class="fn">execute_streaming</span>(self, task: <span class="cls">Task</span>) -> <span class="cls">AsyncIterator</span>[<span class="cls">TaskResponse</span>]:
+        <span class="str">"""Execute with streaming intermediate results."""</span>
+        ...
+
+
+<span class="decorator">@dataclass</span>
+<span class="kw">class</span> <span class="cls">ProviderPriority</span>:
+    <span class="str">"""Priority config for a skill's provider fallback chain."""</span>
+    skill_id: <span class="cls">str</span>
+    primary: <span class="cls">str</span>
+    fallbacks: <span class="cls">list</span>[<span class="cls">str</span>] = field(default_factory=<span class="cls">list</span>)
+
+    <span class="kw">def</span> <span class="fn">get_ordered_agents</span>(self) -> <span class="cls">list</span>[<span class="cls">str</span>]:
+        <span class="kw">return</span> [self.primary] + self.fallbacks</code></pre>
+                </div>
+
+                <!-- Workflow Tab -->
+                <div class="code-block hidden" id="tab-workflow">
+                    <div class="code-file">src/workflows/research.py</div>
+<pre><code><span class="kw">class</span> <span class="cls">ResearchDepth</span>(<span class="cls">str</span>, <span class="cls">Enum</span>):
+    QUICK    = <span class="str">"quick"</span>       <span class="cmt"># 1-2 searches, basic analysis</span>
+    STANDARD = <span class="str">"standard"</span>    <span class="cmt"># 3-4 searches, full analysis</span>
+    DEEP     = <span class="str">"deep"</span>        <span class="cmt"># 5+ searches, extensive validation</span>
+
+
+<span class="decorator">@dataclass</span>
+<span class="kw">class</span> <span class="cls">ResearchConfig</span>:
+    depth: <span class="cls">ResearchDepth</span>        = ResearchDepth.STANDARD
+    output_format: <span class="cls">OutputFormat</span> = OutputFormat.REPORT
+    max_sources: <span class="cls">int</span>            = <span class="val">10</span>
+    include_validation: <span class="cls">bool</span>    = <span class="val">True</span>
+    timeout_seconds: <span class="cls">int</span>        = <span class="val">300</span>
+
+
+<span class="decorator">@dataclass</span>
+<span class="kw">class</span> <span class="cls">ResearchResult</span>:
+    <span class="str">"""Result of a research workflow execution."""</span>
+    query: <span class="cls">str</span>
+    report: <span class="cls">str</span>
+    sources: <span class="cls">list</span>[<span class="cls">dict</span>]
+    artifacts: <span class="cls">list</span>[<span class="cls">Artifact</span>]
+    duration_seconds: <span class="cls">float</span>
+    success: <span class="cls">bool</span>
+    error: <span class="cls">Optional</span>[<span class="cls">str</span>] = <span class="val">None</span>
+
+    <span class="kw">def</span> <span class="fn">to_dict</span>(self) -> <span class="cls">dict</span>:
+        <span class="kw">return</span> {
+            <span class="str">"query"</span>: self.query,
+            <span class="str">"report"</span>: self.report,
+            <span class="str">"sources_count"</span>: len(self.sources),
+            <span class="str">"duration_seconds"</span>: self.duration_seconds,
+            <span class="str">"success"</span>: self.success,
+        }</code></pre>
+                </div>
+
+                <!-- API Tab -->
+                <div class="code-block hidden" id="tab-api">
+                    <div class="code-file">src/main.py</div>
+<pre><code><span class="decorator">@app.post</span>(<span class="str">"/research"</span>)
+<span class="kw">async def</span> <span class="fn">execute_research</span>(request: <span class="cls">ResearchRequest</span>):
+    <span class="str">"""Execute a research workflow."""</span>
+    config = ResearchConfig(
+        depth=ResearchDepth(request.depth),
+        output_format=OutputFormat(request.output_format)
+    )
+
+    <span class="kw">if</span> request.stream:
+        <span class="kw">return</span> EventSourceResponse(
+            stream_research(request.query, config),
+            media_type=<span class="str">"text/event-stream"</span>
+        )
+
+    result = <span class="kw">await</span> research_workflow.execute(request.query, config)
+
+    <span class="kw">return</span> {
+        <span class="str">"success"</span>: result.success,
+        <span class="str">"query"</span>: result.query,
+        <span class="str">"report"</span>: result.report,
+        <span class="str">"sources_count"</span>: len(result.sources),
+        <span class="str">"duration_seconds"</span>: result.duration_seconds,
+    }
+
+
+<span class="decorator">@app.post</span>(<span class="str">"/a2a"</span>)
+<span class="kw">async def</span> <span class="fn">a2a_endpoint</span>(request: <span class="cls">A2ARequest</span>):
+    <span class="str">"""A2A Protocol JSON-RPC endpoint."""</span>
+    valid, error = A2AProtocol.validate_request(request.model_dump())
+    <span class="kw">if not</span> valid:
+        <span class="kw">return</span> A2AProtocol.create_error(
+            request.id, A2AProtocol.ERROR_INVALID_REQUEST, error
+        )
+
+    <span class="kw">if</span> method == A2AProtocol.METHOD_TASK_SEND:
+        <span class="kw">return await</span> handle_task_send(request.id, params)
+    <span class="kw">elif</span> method == A2AProtocol.METHOD_TASK_GET:
+        <span class="kw">return await</span> handle_task_get(request.id, params)</code></pre>
+                </div>
+
+                <!-- A2A Message Tab -->
+                <div class="code-block hidden" id="tab-a2a-message">
+                    <div class="code-file">A2A Protocol — JSON-RPC Message Flow</div>
+<pre><code><span class="cmt">// 1. Orchestrator sends task to Perplexity for web search</span>
+{
+    <span class="str">"jsonrpc"</span>: <span class="str">"2.0"</span>,
+    <span class="str">"method"</span>: <span class="str">"tasks/send"</span>,
+    <span class="str">"params"</span>: {
+        <span class="str">"id"</span>: <span class="str">"task-001"</span>,
+        <span class="str">"message"</span>: {
+            <span class="str">"role"</span>: <span class="str">"user"</span>,
+            <span class="str">"parts"</span>: [{
+                <span class="str">"type"</span>: <span class="str">"text"</span>,
+                <span class="str">"text"</span>: <span class="str">"Search for AI healthcare FDA approvals 2024"</span>
+            }]
+        },
+        <span class="str">"skillId"</span>: <span class="str">"web-search"</span>,
+        <span class="str">"agentId"</span>: <span class="str">"perplexity"</span>
+    },
+    <span class="str">"id"</span>: <span class="str">"req-001"</span>
+}
+
+<span class="cmt">// 2. Perplexity returns results with sources</span>
+{
+    <span class="str">"jsonrpc"</span>: <span class="str">"2.0"</span>,
+    <span class="str">"result"</span>: {
+        <span class="str">"id"</span>: <span class="str">"task-001"</span>,
+        <span class="str">"status"</span>: <span class="str">"completed"</span>,
+        <span class="str">"artifacts"</span>: [{
+            <span class="str">"type"</span>: <span class="str">"application/json"</span>,
+            <span class="str">"parts"</span>: [{<span class="str">"type"</span>: <span class="str">"data"</span>, <span class="str">"data"</span>: {<span class="str">"sources"</span>: [...]}}]
+        }]
+    },
+    <span class="str">"id"</span>: <span class="str">"req-001"</span>
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Reference Section -->
+        <section class="section" id="api-ref">
+            <div class="section-header-block">
+                <h2 class="section-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+                    </svg>
+                    API Reference
+                </h2>
+            </div>
+            <div class="api-table-wrap">
+                <table class="api-table">
+                    <thead>
+                        <tr>
+                            <th>Endpoint</th>
+                            <th>Method</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>/research</code></td><td><span class="method-badge post">POST</span></td><td>Execute a multi-agent research workflow</td></tr>
+                        <tr><td><code>/a2a</code></td><td><span class="method-badge post">POST</span></td><td>A2A Protocol JSON-RPC endpoint</td></tr>
+                        <tr><td><code>/agents</code></td><td><span class="method-badge get">GET</span></td><td>List all registered agents</td></tr>
+                        <tr><td><code>/agents/{id}/card</code></td><td><span class="method-badge get">GET</span></td><td>Get agent card (A2A discovery)</td></tr>
+                        <tr><td><code>/export/pdf</code></td><td><span class="method-badge post">POST</span></td><td>Download report as PDF</td></tr>
+                        <tr><td><code>/export/docx</code></td><td><span class="method-badge post">POST</span></td><td>Download report as DOCX</td></tr>
+                        <tr><td><code>/health</code></td><td><span class="method-badge get">GET</span></td><td>System health check</td></tr>
+                        <tr><td><code>/api/info</code></td><td><span class="method-badge get">GET</span></td><td>System information</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Tech Stack Section -->
+        <section class="section" id="stack">
+            <div class="section-header-block">
+                <h2 class="section-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                    </svg>
+                    Technical Stack
+                </h2>
+            </div>
+            <div class="stack-grid">
+                <div class="stack-card">
+                    <h4>Backend</h4>
+                    <ul>
+                        <li>Python 3.12 + asyncio</li>
+                        <li>FastAPI + Pydantic</li>
+                        <li>SSE via sse-starlette</li>
+                        <li>Uvicorn ASGI server</li>
+                    </ul>
+                </div>
+                <div class="stack-card">
+                    <h4>AI Providers</h4>
+                    <ul>
+                        <li>Anthropic Claude (Analysis)</li>
+                        <li>OpenAI GPT-4 (Validation)</li>
+                        <li>Perplexity (Web Search)</li>
+                        <li>Ollama (Local Fallback)</li>
+                    </ul>
+                </div>
+                <div class="stack-card">
+                    <h4>Protocol</h4>
+                    <ul>
+                        <li>A2A Agent-to-Agent</li>
+                        <li>JSON-RPC 2.0</li>
+                        <li>Agent Cards (Discovery)</li>
+                        <li>Typed Skill Schemas</li>
+                    </ul>
+                </div>
+                <div class="stack-card">
+                    <h4>Frontend &amp; Export</h4>
+                    <ul>
+                        <li>Vanilla JS, CSS3</li>
+                        <li>marked.js (Markdown)</li>
+                        <li>fpdf2 (PDF generation)</li>
+                        <li>python-docx (DOCX)</li>
+                    </ul>
+                </div>
+            </div>
         </section>
 
         <!-- Footer -->
@@ -310,31 +713,7 @@
                     <span class="gradient-text">ResearchAgent</span>
                     <span class="footer-version">v1.0</span>
                 </div>
-                <div class="footer-links">
-                    <a href="/health">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-                        </svg>
-                        Health
-                    </a>
-                    <a href="/agents">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                            <circle cx="9" cy="7" r="4"/>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                        </svg>
-                        Agents
-                    </a>
-                    <a href="/docs">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                        </svg>
-                        API Docs
-                    </a>
-                </div>
-                <p class="footer-powered">Powered by A2A Protocol</p>
+                <p class="footer-powered">Built with FastAPI, Python, and the A2A Protocol</p>
             </div>
         </footer>
     </div>
@@ -350,7 +729,6 @@
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="/static/app.js"></script>
 </body>
